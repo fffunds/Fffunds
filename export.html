@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head><title>FFF Data Export</title></head>
+<body>
+<h2>Step 1: Export from Old Site</h2>
+<button onclick="exportData()">Export Data</button>
+<textarea id="exportBox" style="width:100%;height:200px;"></textarea>
+
+<h2>Step 2: Paste into New Site</h2>
+<textarea id="importBox" style="width:100%;height:200px;" placeholder="Paste the exported data here..."></textarea>
+<button onclick="importData()">Import Data</button>
+<p id="status"></p>
+
+<script>
+function exportData() {
+  var d = JSON.stringify({
+    users: localStorage.getItem('fff_u'),
+    sessions: localStorage.getItem('fff_s'),
+    pending: localStorage.getItem('fff_p'),
+    settings: localStorage.getItem('fff_anp'),
+    depositPromo: localStorage.getItem('fff_deposit_promo'),
+    vipPromo: localStorage.getItem('fff_vip_promo'),
+    usedNames: localStorage.getItem('fff_used_names'),
+    devices: localStorage.getItem('fff_devices')
+  });
+  document.getElementById('exportBox').value = d;
+  document.getElementById('status').textContent = 'Data exported! Copy everything in the box above.';
+}
+
+function importData() {
+  try {
+    var d = JSON.parse(document.getElementById('importBox').value);
+    if(d.users) localStorage.setItem('fff_u', d.users);
+    if(d.sessions) localStorage.setItem('fff_s', d.sessions);
+    if(d.pending) localStorage.setItem('fff_p', d.pending);
+    if(d.settings) localStorage.setItem('fff_anp', d.settings);
+    if(d.depositPromo) localStorage.setItem('fff_deposit_promo', d.depositPromo);
+    if(d.vipPromo) localStorage.setItem('fff_vip_promo', d.vipPromo);
+    if(d.usedNames) localStorage.setItem('fff_used_names', d.usedNames);
+    if(d.devices) localStorage.setItem('fff_devices', d.devices);
+    document.getElementById('status').textContent = '✅ Data imported! You can now close this page.';
+  } catch(e) {
+    document.getElementById('status').textContent = '❌ Error: ' + e.message;
+  }
+}
+</script>
+</body>
+</html>
