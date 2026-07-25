@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<title>Frank Finance Fund - Admin</title>
+<title>FFF System</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <style>
-:root{--bg-deep:#04070d;--bg-primary:#080c18;--bg-card:#111827;--bg-elevated:#151d33;--gold:#f0b90b;--gold-light:#fcd535;--text-primary:#fff;--text-secondary:#e2e8f0;--text-muted:#b0bec5;--border:#1e293b;--border-light:#334155;--green:#10b981;--red:#ef4444;--blue:#3b82f6;--purple:#8b5cf6}
+:root{--bg-deep:#04070d;--bg-primary:#080c18;--bg-card:#111827;--bg-elevated:#151d33;--gold:#f0b90b;--gold-light:#fcd535;--text-primary:#fff;--text-secondary:#e2e8f0;--text-muted:#b0bec5;--border:#1e293b;--green:#10b981;--red:#ef4444;--blue:#3b82f6;--purple:#8b5cf6}
 *{margin:0;padding:0;box-sizing:border-box}html{height:100%;overflow-x:hidden}body{background:var(--bg-deep);color:var(--text-primary);min-height:100vh;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;font-weight:600}
 .admin-header{background:rgba(8,12,24,0.97);backdrop-filter:blur(24px);border-bottom:2px solid var(--gold);padding:14px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:10px}
 .admin-header h1{color:var(--gold-light);font-size:20px;font-weight:800}
@@ -15,7 +16,7 @@
 .stat-label{font-size:9px;text-transform:uppercase;color:var(--text-muted);letter-spacing:1px;font-weight:700}
 .stat-value{font-size:18px;font-weight:900;color:var(--gold-light)}
 .container{max-width:1400px;margin:0 auto;padding:16px}
-.tab-nav{display:flex;gap:6px;margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:10px;flex-wrap:wrap;overflow-x:auto}
+.tab-nav{display:flex;gap:6px;margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:10px;flex-wrap:wrap}
 .tab-btn{padding:9px 16px;background:var(--bg-elevated);border:1px solid var(--border);color:var(--text-secondary);border-radius:8px;cursor:pointer;font-size:12px;font-weight:700;transition:all 0.2s;font-family:inherit;white-space:nowrap}
 .tab-btn.active,.tab-btn:hover{background:var(--gold);color:#080c18;border-color:var(--gold)}
 .tab-content{display:none}.tab-content.active{display:block}
@@ -25,40 +26,50 @@ input,select,textarea{width:100%;padding:10px 12px;background:var(--bg-primary);
 input:focus,select:focus,textarea:focus{border-color:var(--gold)}
 label{display:block;font-size:10px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px}
 button{padding:9px 18px;background:var(--gold);color:#080c18;border:none;border-radius:8px;cursor:pointer;font-weight:800;font-size:12px;font-family:inherit;transition:all 0.2s;display:inline-flex;align-items:center;gap:5px}
-button:hover{opacity:0.9;transform:translateY(-1px)}
-button:active{transform:scale(0.95)}
-.btn-sm{padding:5px 10px;font-size:10px}.btn-danger{background:var(--red);color:white}.btn-success{background:var(--green);color:white}.btn-info{background:var(--blue);color:white}.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text-secondary)}.btn-xs{padding:4px 8px;font-size:9px;border-radius:4px;cursor:pointer;border:none;font-weight:700;font-family:inherit}
+button:hover{opacity:0.9;transform:translateY(-1px)}button:active{transform:scale(0.95)}
+.btn-sm{padding:5px 10px;font-size:10px}.btn-danger{background:var(--red);color:white}.btn-success{background:var(--green);color:white}.btn-info{background:var(--blue);color:white}.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text-secondary)}.btn-xs{padding:4px 8px;font-size:9px;border-radius:4px;cursor:pointer;border:none;font-weight:700;font-family:inherit;background:#f59e0b;color:#080c18}
 .badge{display:inline-block;padding:4px 10px;border-radius:50px;font-size:9px;font-weight:700}.badge-green{background:rgba(38,161,123,0.15);color:var(--green);border:1px solid rgba(38,161,123,0.35)}.badge-red{background:rgba(239,68,68,0.15);color:var(--red);border:1px solid rgba(239,68,68,0.35)}.badge-gold{background:rgba(240,185,11,0.15);color:var(--gold-light);border:1px solid rgba(240,185,11,0.35)}
-.form-group{margin-bottom:12px}
+.form-group{margin-bottom:12px}.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 table{width:100%;border-collapse:collapse;font-size:11px;font-weight:600}
 th{text-align:left;padding:8px 6px;background:var(--bg-elevated);color:var(--text-muted);font-size:9px;text-transform:uppercase;border-bottom:1px solid var(--border)}
 td{padding:8px 6px;border-bottom:1px solid rgba(30,41,59,0.35)}
 .users-table-container{max-height:500px;overflow-y:auto}
 .actions-cell{display:flex;gap:3px;flex-wrap:wrap}
-.status-msg{padding:8px 12px;border-radius:8px;font-size:10px;margin-top:6px;font-weight:600}
-.status-success{background:rgba(16,185,129,0.1);color:#34d399}.status-error{background:rgba(239,68,68,0.1);color:#f87171}.status-info{background:rgba(59,130,246,0.1);color:#60a5fa}
-.login-container{max-width:420px;margin:80px auto;background:var(--bg-card);border:2px solid var(--border);border-radius:16px;padding:36px}
+.pin-input{text-align:center;font-size:22px;letter-spacing:12px;font-weight:800;padding:14px;border:2px solid var(--gold);border-radius:12px;background:var(--bg-primary);color:var(--gold-light);max-width:200px}
+.login-container{max-width:440px;margin:80px auto;background:var(--bg-card);border:2px solid var(--border);border-radius:16px;padding:36px}
 .login-container h2{text-align:center;color:var(--gold-light);margin-bottom:20px;font-size:20px}
-.hidden{display:none!important}.w-full{width:100%}
+.hidden{display:none!important}.w-full{width:100%}.mt-2{margin-top:12px}
 code{background:var(--bg-primary);padding:2px 6px;border-radius:4px;font-size:9px;font-family:'Courier New',monospace}
 .pending-item{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
 .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:3000;display:flex;align-items:center;justify-content:center;padding:20px}
 .modal-box{background:var(--bg-card);border-radius:16px;padding:24px;max-width:600px;width:100%;max-height:85vh;overflow-y:auto;border:2px solid var(--gold);animation:popIn 0.3s ease}@keyframes popIn{from{transform:scale(0.8);opacity:0}to{transform:scale(1);opacity:1}}
 .approval-section{background:var(--bg-elevated);border-radius:10px;padding:14px;margin-bottom:8px;border:1px solid var(--border)}
-.admin-promo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
-@media(max-width:768px){.admin-stats{display:none}.admin-header{flex-direction:column}}
+.notification-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:10px;display:flex;align-items:flex-start;gap:12px;animation:slideIn 0.3s ease}
+@keyframes slideIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+.notif-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.notif-success{border-left:4px solid var(--green)}.notif-success .notif-icon{background:rgba(16,185,129,0.15);color:var(--green)}
+.notif-error{border-left:4px solid var(--red)}.notif-error .notif-icon{background:rgba(239,68,68,0.15);color:var(--red)}
+.notif-info{border-left:4px solid var(--blue)}.notif-info .notif-icon{background:rgba(59,130,246,0.15);color:var(--blue)}
+.notif-warning{border-left:4px solid #f59e0b}.notif-warning .notif-icon{background:rgba(245,158,11,0.15);color:#f59e0b}
+.toast-container{position:fixed;top:20px;right:20px;z-index:5000;display:flex;flex-direction:column;gap:8px;max-width:380px}
+@media(max-width:768px){.admin-stats{display:none}.admin-header{flex-direction:column}.grid-2{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- LOGIN SCREEN -->
 <div id="loginScreen" class="login-container">
-    <h2>🏛️ Admin Portal</h2>
-    <div class="form-group"><label>Username</label><input type="text" id="loginUser" value="frank_admin_2026"></div>
-    <div class="form-group"><label>Password</label><input type="password" id="loginPass" value="FF@dmin#2026!Secure"></div>
-    <button onclick="doLogin()" style="width:100%;justify-content:center;">🔐 Authenticate</button>
-    <div id="loginError" class="status-msg status-error" style="display:none;margin-top:10px;"></div>
+    <h2>🔐 Secure Access</h2>
+    <p style="text-align:center;color:var(--text-muted);font-size:11px;margin-bottom:18px;">SHA256 Encrypted Authentication</p>
+    <div class="form-group"><label>Username</label><input type="text" id="loginUser" placeholder="Enter username" autocomplete="off"></div>
+    <div class="form-group"><label>Password</label><input type="password" id="loginPass" placeholder="Enter password"></div>
+    <button onclick="doLogin()" style="width:100%;justify-content:center;">🔓 Authenticate</button>
+    <div id="loginError" class="notification-card notif-error" style="display:none;margin-top:10px;"></div>
 </div>
 
+<!-- MAIN DASHBOARD -->
 <div id="mainDashboard" class="hidden">
     <div class="admin-header">
         <div><h1>🏛️ Frank Finance Fund</h1><span style="font-size:9px;color:var(--text-muted);">Admin Console</span></div>
@@ -66,8 +77,9 @@ code{background:var(--bg-primary);padding:2px 6px;border-radius:4px;font-size:9p
             <div class="stat-item"><div class="stat-label">Users</div><div class="stat-value" id="statUsers">0</div></div>
             <div class="stat-item"><div class="stat-label">AUM</div><div class="stat-value" id="statAUM">$0</div></div>
             <div class="stat-item"><div class="stat-label">Pending</div><div class="stat-value" id="statPending">0</div></div>
+            <div class="stat-item"><div class="stat-label">IPFS</div><div class="stat-value" id="statIPFS" style="font-size:9px;">-</div></div>
         </div>
-        <button onclick="doLogout()" class="btn-outline">🚪 Logout</button>
+        <button onclick="doLogout()" class="btn-outline">🚪 Lock & Exit</button>
     </div>
 
     <div class="container">
@@ -79,21 +91,31 @@ code{background:var(--bg-primary);padding:2px 6px;border-radius:4px;font-size:9p
             <button class="tab-btn" onclick="switchTab('wallets')">🔐 Wallets</button>
             <button class="tab-btn" onclick="switchTab('ipfs')">🌐 IPFS</button>
             <button class="tab-btn" onclick="switchTab('data')">💾 Data</button>
+            <button class="tab-btn" onclick="switchTab('settings')">⚙️ Settings</button>
         </div>
 
         <div id="tab-pending" class="tab-content active"><div class="card"><h3>📥 Pending Approvals</h3><div id="pendingList"><p style="color:var(--text-muted);text-align:center;padding:40px;">No pending requests</p></div></div></div>
 
         <div id="tab-users" class="tab-content"><div class="card"><h3>👥 User Management</h3><div style="margin-bottom:10px;"><input type="text" id="userSearch" placeholder="🔍 Search..." oninput="filterUsers()" style="max-width:350px;"></div><div class="users-table-container"><table><thead><tr><th>Account #</th><th>Username</th><th>Email</th><th>Balance</th><th>Status</th><th>VIP</th><th>Actions</th></tr></thead><tbody id="usersTableBody"></tbody></table></div></div></div>
 
-        <div id="tab-promo" class="tab-content"><div class="card"><h3>💚 Promo Configuration</h3><div class="admin-promo-grid"><div class="form-group"><label>Label</label><input type="text" id="promoLabel"></div><div class="form-group"><label>Code</label><input type="text" id="promoCode"></div><div class="form-group"><label>Discount %</label><input type="number" id="promoDiscount" min="1" max="99"></div><div class="form-group"><label>Status</label><select id="promoStatus"><option value="active">Active</option><option value="inactive">Inactive</option></select></div><div class="form-group"><label>Deposit Window (Hrs)</label><input type="number" id="promoDepHours" min="1"></div><div class="form-group"><label>VIP Window (Hrs)</label><input type="number" id="promoVIPHours" min="1"></div></div><div style="display:flex;gap:8px;margin-top:10px;"><button onclick="savePromo()">💾 Save Promo</button><button onclick="extendPromo()" class="btn-outline">🔄 Extend</button></div><div id="promoStatusMsg" style="margin-top:8px;font-size:10px;"></div></div></div>
+        <div id="tab-promo" class="tab-content"><div class="card"><h3>💚 Promo Configuration</h3><div class="grid-2"><div class="form-group"><label>Label</label><input type="text" id="promoLabel"></div><div class="form-group"><label>Code</label><input type="text" id="promoCode"></div><div class="form-group"><label>Discount %</label><input type="number" id="promoDiscount" min="1" max="99"></div><div class="form-group"><label>Status</label><select id="promoStatus"><option value="active">Active</option><option value="inactive">Inactive</option></select></div><div class="form-group"><label>Deposit Window (Hrs)</label><input type="number" id="promoDepHours" min="1"></div><div class="form-group"><label>VIP Window (Hrs)</label><input type="number" id="promoVIPHours" min="1"></div></div><button onclick="savePromo()">💾 Save</button><div id="promoStatusMsg"></div></div></div>
 
-        <div id="tab-announcement" class="tab-content"><div class="card"><h3>📢 Announcement</h3><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><span>Status:</span><span class="badge" id="annStatusBadge">-</span><button onclick="toggleAnnounce()" id="annToggleBtn">Toggle</button></div><div class="form-group"><label>Text</label><textarea id="annText" rows="3"></textarea></div><button onclick="saveAnnounce()">💾 Save</button></div></div>
+        <div id="tab-announcement" class="tab-content"><div class="card"><h3>📢 Announcement</h3><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><span class="badge" id="annStatusBadge">-</span><button onclick="toggleAnnounce()" id="annToggleBtn">Toggle</button></div><div class="form-group"><label>Text</label><textarea id="annText" rows="3"></textarea></div><button onclick="saveAnnounce()">💾 Save</button></div></div>
 
-        <div id="tab-wallets" class="tab-content"><div class="card"><h3>🔐 Wallets</h3><div class="form-group"><label>BEP20</label><input type="text" id="walletBEP20"></div><div class="form-group"><label>TRC20</label><input type="text" id="walletTRC20"></div><div class="form-group"><label>TETHER</label><input type="text" id="walletTETHER"></div><button onclick="saveWallets()">💾 Save</button><div id="walletConfigStatus" style="margin-top:8px;font-size:10px;"></div></div></div>
+        <div id="tab-wallets" class="tab-content">
+            <div class="card" id="walletLocked"><h3>🔐 Wallet Access</h3><p style="font-size:10px;color:var(--text-muted);margin-bottom:12px;">Enter wallet PIN to view and edit wallet addresses.</p><div class="form-group"><label>Wallet PIN (6 digits)</label><input type="password" id="walletPIN" class="pin-input" maxlength="6" placeholder="••••••"></div><button onclick="unlockWallets()">🔓 Unlock</button><div id="walletPINError"></div></div>
+            <div class="card hidden" id="walletUnlocked"><h3>🔐 Wallet Configuration</h3><div class="form-group"><label>BEP20</label><input type="text" id="walletBEP20"></div><div class="form-group"><label>TRC20</label><input type="text" id="walletTRC20"></div><div class="form-group"><label>TETHER</label><input type="text" id="walletTETHER"></div><button onclick="saveWallets()">💾 Save & Encrypt</button><div id="walletConfigStatus"></div><button onclick="lockWallets()" class="btn-outline mt-2" style="margin-top:10px;">🔒 Lock</button></div>
+        </div>
 
-        <div id="tab-ipfs" class="tab-content"><div class="card"><h3>🌐 IPFS</h3><p style="font-size:10px;color:var(--text-muted);margin-bottom:10px;">Push data to IPFS. Auto-syncs with public HTML.</p><div class="form-group"><label>Data CID</label><input type="text" id="ipfsCID" readonly style="font-family:monospace;font-size:10px;"></div><button onclick="pushToIPFS()" class="w-full">📤 Push All Data to IPFS</button><div id="ipfsStatusMsg" style="margin-top:8px;font-size:10px;"></div></div></div>
+        <div id="tab-ipfs" class="tab-content"><div class="card"><h3>🌐 IPFS</h3><div class="form-group"><label>Data CID</label><input type="text" id="ipfsCID" readonly style="font-family:monospace;font-size:10px;"></div><button onclick="pushToIPFS()" class="w-full">📤 Push Encrypted Data to IPFS</button><div id="ipfsStatusMsg"></div></div></div>
 
-        <div id="tab-data" class="tab-content"><div class="card"><h3>💾 Data</h3><div style="display:flex;gap:8px;flex-wrap:wrap;"><button onclick="refreshAll()">🔄 Refresh</button><button onclick="exportData()" class="btn-outline">📥 Export</button><button onclick="importData()" class="btn-outline">📤 Import</button><button onclick="forceSync()" class="btn-info">🔗 Sync to Public</button></div><div id="dataStatusMsg" style="margin-top:8px;font-size:10px;"></div></div></div>
+        <div id="tab-data" class="tab-content"><div class="card"><h3>💾 Data</h3><div style="display:flex;gap:8px;flex-wrap:wrap;"><button onclick="refreshAll()">🔄 Refresh</button><button onclick="exportData()" class="btn-outline">📥 Export</button><button onclick="importData()" class="btn-outline">📤 Import</button><button onclick="forceSync()" class="btn-info">🔗 Sync to Public</button></div><div id="dataStatusMsg"></div></div></div>
+
+        <div id="tab-settings" class="tab-content">
+            <div class="card"><h3>⚙️ Change Master Password</h3><p style="font-size:10px;color:var(--text-muted);margin-bottom:10px;">Requires master verification PIN.</p><div class="form-group"><label>Master Verification PIN (4 digits)</label><input type="password" id="masterVerifyPIN1" class="pin-input" maxlength="4" style="max-width:120px;"></div><div class="form-group"><label>Current Password</label><input type="password" id="currentMasterPass"></div><div class="form-group"><label>New Password (min 8 chars)</label><input type="password" id="newMasterPass"></div><div class="form-group"><label>Confirm New Password</label><input type="password" id="confirmMasterPass"></div><button onclick="changeMasterPassword()">🔐 Update</button><div id="masterPassStatus"></div></div>
+            <div class="card"><h3>🔢 Change Wallet PIN</h3><p style="font-size:10px;color:var(--text-muted);margin-bottom:10px;">Requires master verification PIN.</p><div class="form-group"><label>Master Verification PIN (4 digits)</label><input type="password" id="masterVerifyPIN2" class="pin-input" maxlength="4" style="max-width:120px;"></div><div class="form-group"><label>Current Wallet PIN</label><input type="password" id="currentWalletPIN" class="pin-input" maxlength="6"></div><div class="form-group"><label>New PIN (6 digits)</label><input type="password" id="newWalletPIN" class="pin-input" maxlength="6"></div><div class="form-group"><label>Confirm New PIN</label><input type="password" id="confirmWalletPIN" class="pin-input" maxlength="6"></div><button onclick="changeWalletPIN()">🔢 Update</button><div id="walletPINStatus"></div></div>
+            <div class="card"><h3>🔑 Change Master Verification PIN</h3><div class="form-group"><label>Current Master PIN</label><input type="password" id="currentMasterPIN" class="pin-input" maxlength="4" style="max-width:120px;"></div><div class="form-group"><label>New Master PIN (4 digits)</label><input type="password" id="newMasterPIN" class="pin-input" maxlength="4" style="max-width:120px;"></div><div class="form-group"><label>Confirm New Master PIN</label><input type="password" id="confirmMasterPIN" class="pin-input" maxlength="4" style="max-width:120px;"></div><button onclick="changeMasterPIN()">🔑 Update Master PIN</button><div id="masterPINStatus"></div></div>
+        </div>
     </div>
 </div>
 
@@ -101,572 +123,175 @@ code{background:var(--bg-primary);padding:2px 6px;border-radius:4px;font-size:9p
 <input type="file" id="backupFileInput" accept=".json" style="display:none;" onchange="handleImport(event)">
 
 <script>
-// ============ CONFIG ============
-var AUTH_USER = 'frank_admin_2026';
-var AUTH_PASS = 'FF@dmin#2026!Secure';
-var KEYS = { users: 'fff_u', pending: 'fff_p', promo: 'fff_promo_config', announcement: 'fff_announce_config', wallets: 'fff_wallet_config', ipfs: 'fff_ipfs_index_cid' };
-var VIP_LEVELS = [{l:0,n:'Standard',c:'#94a3b8'},{l:0.5,n:'VIP Starter',c:'#94a3b8'},{l:1,n:'VIP 1',c:'#6b7280'},{l:2,n:'VIP 2',c:'#9ca3af'},{l:3,n:'VIP 3 Premium',c:'#f59e0b'},{l:4,n:'VIP 4 Platinum',c:'#a78bfa'},{l:5,n:'VIP 5 Diamond',c:'#f472b6'},{l:6,n:'VIP 6 Elite',c:'#38bdf8'}];
-var MERCHANTS = ["Amazon","Amazon Prime","Walmart","eBay","Best Buy","Target","Home Depot","Costco","Netflix","Spotify","Uber","Uber Eats","DoorDash","Airbnb","Expedia","Delta Airlines","Starbucks","Nike.com","Adidas.com","Apple Store","Google Play","Steam","PlayStation Store","Xbox Store","Shopify","Etsy","Adobe Creative Cloud","Microsoft 365","Namecheap","Cloudflare","DigitalOcean","Binance","Coinbase","OpenSea","Ledger","Samsung.com","Dell.com","HP.com","Newegg","B&H Photo","Wayfair","IKEA","Zara","H&M","ASOS","Sephora","Ulta Beauty","Chewy","Whole Foods"];
+// ============ CREDENTIALS ============
+function getHash(val) { return CryptoJS.SHA256(val).toString(); }
 
-var users = [];
-var pending = [];
-var promoConfig = null;
-var announceConfig = null;
-var walletAddrs = { BEP20: '', TRC20: '', TETHER: '' };
-var ipfsCID = '';
-var loggedIn = false;
+var AUTH_USER_HASH = localStorage.getItem('fff_auth_user_hash') || getHash('admin');
+var AUTH_PASS_HASH = localStorage.getItem('fff_auth_pass_hash') || getHash('Frank2026!');
+var WALLET_PIN_HASH = localStorage.getItem('fff_wallet_pin_hash') || getHash('123456');
+var MASTER_PIN_HASH = localStorage.getItem('fff_master_pin_hash') || getHash('2026');
+
+// Save defaults if not set
+if (!localStorage.getItem('fff_auth_user_hash')) localStorage.setItem('fff_auth_user_hash', AUTH_USER_HASH);
+if (!localStorage.getItem('fff_auth_pass_hash')) localStorage.setItem('fff_auth_pass_hash', AUTH_PASS_HASH);
+if (!localStorage.getItem('fff_wallet_pin_hash')) localStorage.setItem('fff_wallet_pin_hash', WALLET_PIN_HASH);
+if (!localStorage.getItem('fff_master_pin_hash')) localStorage.setItem('fff_master_pin_hash', MASTER_PIN_HASH);
+
+console.log('🔐 System ready');
+console.log('   Master PIN default: 2026');
+
+var KEYS = { users: 'fff_u', pending: 'fff_p', promo: 'fff_promo_config', announcement: 'fff_announce_config', wallets: 'fff_wallet_config', ipfs: 'fff_ipfs_index_cid', session: 'fff_admin_session' };
+var VIP = [{l:0,n:'Standard',c:'#94a3b8'},{l:0.5,n:'VIP Starter',c:'#94a3b8'},{l:1,n:'VIP 1',c:'#6b7280'},{l:2,n:'VIP 2',c:'#9ca3af'},{l:3,n:'VIP 3 Premium',c:'#f59e0b'},{l:4,n:'VIP 4 Platinum',c:'#a78bfa'},{l:5,n:'VIP 5 Diamond',c:'#f472b6'},{l:6,n:'VIP 6 Elite',c:'#38bdf8'}];
+var MERCHANTS = ["Amazon","Amazon Prime","Walmart","eBay","Best Buy","Target","Home Depot","Costco","Netflix","Spotify","Uber","Uber Eats","DoorDash","Airbnb","Expedia","Delta Airlines","Starbucks","Nike.com","Adidas.com","Apple Store","Google Play","Steam","PlayStation Store","Xbox Store","Shopify","Etsy","Adobe Creative Cloud","Microsoft 365","Namecheap","Cloudflare","DigitalOcean","Binance","Coinbase","OpenSea","Ledger","Samsung.com","Dell.com","HP.com","Newegg","B&H Photo","Wayfair","IKEA","Zara","H&M","ASOS","Sephora","Ulta Beauty","Chewy","Whole Foods"];
+var users=[],pending=[],promoConfig=null,announceConfig=null,walletAddrs={BEP20:'',TRC20:'',TETHER:''},ipfsCID='',loggedIn=false,walletsUnlocked=false;
 
 // ============ HELPERS ============
-function sh(s) { var h = 0; for (var i = 0; i < s.length; i++) { h = ((h << 5) - h) + s.charCodeAt(i); h = h & h; } return Math.abs(h).toString(36); }
-function enc(d) { try { return btoa(unescape(encodeURIComponent('FFF_SALT_2024' + JSON.stringify(d)))).split('').reverse().join(''); } catch(e) { return ''; } }
-function dec(e) { try { var r = e.split('').reverse().join(''); var j = decodeURIComponent(escape(atob(r))); if (!j.startsWith('FFF_SALT_2024')) return null; return JSON.parse(j.substring(13)); } catch(e) { return null; } }
-function sG(k) { var r = localStorage.getItem(k); if (!r) return null; var d = dec(r); if (d && d.hash && d.data) { if (sh(JSON.stringify(d.data)) !== d.hash) { localStorage.removeItem(k); return null; } return d.data; } return d; }
-function sS(k, d) { var ds = JSON.stringify(d); localStorage.setItem(k, enc({ data: d, hash: sh(ds), timestamp: Date.now() })); }
-function cl(t) { return t === 'visa' ? 'VISA' : t === 'master' ? 'MASTERCARD' : 'PLATINUM'; }
-function msg(id, txt, type) { var el = document.getElementById(id); if (el) { el.textContent = txt; el.className = 'status-msg status-' + type; setTimeout(function() { el.textContent = ''; }, 4000); } }
-function closeModal() { document.getElementById('modalOverlay').classList.add('hidden'); }
-document.getElementById('modalOverlay').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
-function switchTab(t) {
-    document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
-    document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
-    var btn = document.querySelector('[onclick="switchTab(\'' + t + '\')"]');
-    if (btn) btn.classList.add('active');
-    var tab = document.getElementById('tab-' + t);
-    if (tab) tab.classList.add('active');
+function sh(s){var h=0;for(var i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h=h&h;}return Math.abs(h).toString(36);}
+function enc(d){try{return btoa(unescape(encodeURIComponent('FFF_SALT_2024'+JSON.stringify(d)))).split('').reverse().join('');}catch(e){return'';}}
+function dec(e){try{var r=e.split('').reverse().join('');var j=decodeURIComponent(escape(atob(r)));if(!j.startsWith('FFF_SALT_2024'))return null;return JSON.parse(j.substring(13));}catch(e){return null;}}
+function sG(k){var r=localStorage.getItem(k);if(!r)return null;var d=dec(r);if(d&&d.hash&&d.data){if(sh(JSON.stringify(d.data))!==d.hash){localStorage.removeItem(k);return null;}return d.data;}return d;}
+function sS(k,d){var ds=JSON.stringify(d);localStorage.setItem(k,enc({data:d,hash:sh(ds),timestamp:Date.now()}));}
+function cl(t){return t==='visa'?'VISA':t==='master'?'MASTERCARD':'PLATINUM';}
+function ec(u){if(!u)return[];if(!u.virtualCards||!Array.isArray(u.virtualCards))u.virtualCards=[];if(!u.cardSettings)u.cardSettings={cardHolderName:(u.fullName||u.username||'CARDHOLDER').toUpperCase(),pins:{},designs:{},pinChanged:{}};if(!u.cardSettings.pins)u.cardSettings.pins={};if(!u.accountNumber)u.accountNumber='617'+Math.floor(1e6+Math.random()*9e6).toString();return u.virtualCards;}
+function closeModal(){document.getElementById('modalOverlay').classList.add('hidden');}
+document.getElementById('modalOverlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
+function switchTab(t){document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active');});var btn=document.querySelector('[onclick="switchTab(\''+t+'\')"]');if(btn)btn.classList.add('active');var tab=document.getElementById('tab-'+t);if(tab)tab.classList.add('active');}
+
+// ============ TOASTS ============
+function showToast(msg,type){
+    var icons={success:'✅',error:'❌',info:'ℹ️',warning:'⚠️'};
+    var titles={success:'Success',error:'Error',info:'Info',warning:'Warning'};
+    var c=document.getElementById('toastContainer');
+    var card=document.createElement('div');
+    card.className='notification-card notif-'+type;
+    card.innerHTML='<div class="notif-icon">'+icons[type]+'</div><div><strong>'+titles[type]+'</strong><p style="font-size:10px;color:var(--text-muted);">'+msg+'</p></div>';
+    c.appendChild(card);
+    setTimeout(function(){card.style.opacity='0';card.style.transition='opacity 0.5s';setTimeout(function(){if(card.parentNode)card.remove();},500);},4000);
+}
+function showInline(id,msg,type){
+    var el=document.getElementById(id);var icons={success:'✅',error:'❌',info:'ℹ️',warning:'⚠️'};
+    if(el){el.innerHTML='<div class="notification-card notif-'+type+'" style="margin:0;"><div class="notif-icon">'+icons[type]+'</div><div><strong>'+(type==='success'?'Success':'Error')+'</strong><p style="font-size:10px;color:var(--text-muted);">'+msg+'</p></div></div>';setTimeout(function(){el.innerHTML='';},5000);}
 }
 
 // ============ LOGIN ============
-function doLogin() {
-    if (document.getElementById('loginUser').value.trim() === AUTH_USER && document.getElementById('loginPass').value === AUTH_PASS) {
-        loggedIn = true;
-        sessionStorage.setItem('fff_admin_session', JSON.stringify({ ok: true, ts: Date.now() }));
-        document.getElementById('loginScreen').classList.add('hidden');
-        document.getElementById('mainDashboard').classList.remove('hidden');
-        loadAllData();
-        updateAllViews();
-    } else {
-        document.getElementById('loginError').style.display = 'block';
-        document.getElementById('loginError').textContent = 'Invalid credentials';
-    }
+function doLogin(){
+    var u=document.getElementById('loginUser').value.trim();
+    var p=document.getElementById('loginPass').value;
+    if(!u||!p){showLoginError('Please enter both username and password.');return;}
+    if(getHash(u)===AUTH_USER_HASH&&getHash(p)===AUTH_PASS_HASH){
+        loggedIn=true;sessionStorage.setItem(KEYS.session,JSON.stringify({ok:true,ts:Date.now()}));
+        document.getElementById('loginScreen').classList.add('hidden');document.getElementById('mainDashboard').classList.remove('hidden');
+        loadAllData();updateAllViews();showToast('Access granted. Welcome!','success');
+    }else{showLoginError('Invalid credentials.');}
 }
-function doLogout() {
-    loggedIn = false;
-    sessionStorage.removeItem('fff_admin_session');
-    document.getElementById('loginScreen').classList.remove('hidden');
-    document.getElementById('mainDashboard').classList.add('hidden');
+function showLoginError(msg){var el=document.getElementById('loginError');el.style.display='flex';el.innerHTML='<div class="notif-icon">❌</div><div><strong>Access Denied</strong><p style="font-size:10px;color:var(--text-muted);">'+msg+'</p></div>';setTimeout(function(){el.style.display='none';},4000);}
+function doLogout(){loggedIn=false;walletsUnlocked=false;sessionStorage.removeItem(KEYS.session);document.getElementById('loginScreen').classList.remove('hidden');document.getElementById('mainDashboard').classList.add('hidden');document.getElementById('walletLocked').classList.remove('hidden');document.getElementById('walletUnlocked').classList.add('hidden');}
+
+// ============ MASTER PIN VERIFICATION ============
+function verifyMasterPIN(inputId){
+    var pin=document.getElementById(inputId).value.trim();
+    if(!pin||pin.length!==4){showToast('Master PIN must be 4 digits.','error');return false;}
+    if(getHash(pin)!==MASTER_PIN_HASH){showToast('Incorrect master verification PIN.','error');return false;}
+    return true;
+}
+
+// ============ WALLET PIN ============
+function unlockWallets(){
+    var pin=document.getElementById('walletPIN').value.trim();
+    if(!pin||pin.length!==6){showInline('walletPINError','Enter 6-digit PIN.','error');return;}
+    if(getHash(pin)===WALLET_PIN_HASH){walletsUnlocked=true;document.getElementById('walletLocked').classList.add('hidden');document.getElementById('walletUnlocked').classList.remove('hidden');renderWalletsTab();showToast('Wallets unlocked.','success');}
+    else{showInline('walletPINError','Incorrect PIN.','error');}
+}
+function lockWallets(){walletsUnlocked=false;document.getElementById('walletLocked').classList.remove('hidden');document.getElementById('walletUnlocked').classList.add('hidden');document.getElementById('walletPIN').value='';}
+
+// ============ CHANGE CREDENTIALS (Master PIN Protected) ============
+function changeMasterPassword(){
+    if(!verifyMasterPIN('masterVerifyPIN1'))return;
+    var cp=document.getElementById('currentMasterPass').value;
+    var np=document.getElementById('newMasterPass').value;
+    var ncp=document.getElementById('confirmMasterPass').value;
+    if(!cp||getHash(cp)!==AUTH_PASS_HASH){showInline('masterPassStatus','Current password incorrect.','error');return;}
+    if(!np||np.length<8){showInline('masterPassStatus','Min 8 characters.','error');return;}
+    if(np!==ncp){showInline('masterPassStatus','Passwords do not match.','error');return;}
+    AUTH_PASS_HASH=getHash(np);localStorage.setItem('fff_auth_pass_hash',AUTH_PASS_HASH);
+    showInline('masterPassStatus','Password changed!','success');showToast('Password updated! 🔐','success');
+}
+function changeWalletPIN(){
+    if(!verifyMasterPIN('masterVerifyPIN2'))return;
+    var cp=document.getElementById('currentWalletPIN').value.trim();
+    var np=document.getElementById('newWalletPIN').value.trim();
+    var ncp=document.getElementById('confirmWalletPIN').value.trim();
+    if(!cp||getHash(cp)!==WALLET_PIN_HASH){showInline('walletPINStatus','Current PIN incorrect.','error');return;}
+    if(!np||np.length!==6||!/^\d{6}$/.test(np)){showInline('walletPINStatus','Must be 6 digits.','error');return;}
+    if(np!==ncp){showInline('walletPINStatus','PINs do not match.','error');return;}
+    WALLET_PIN_HASH=getHash(np);localStorage.setItem('fff_wallet_pin_hash',WALLET_PIN_HASH);
+    showInline('walletPINStatus','Wallet PIN changed!','success');showToast('Wallet PIN updated! 🔢','success');
+}
+function changeMasterPIN(){
+    var cp=document.getElementById('currentMasterPIN').value.trim();
+    var np=document.getElementById('newMasterPIN').value.trim();
+    var ncp=document.getElementById('confirmMasterPIN').value.trim();
+    if(!cp||getHash(cp)!==MASTER_PIN_HASH){showInline('masterPINStatus','Current master PIN incorrect.','error');return;}
+    if(!np||np.length!==4||!/^\d{4}$/.test(np)){showInline('masterPINStatus','Must be 4 digits.','error');return;}
+    if(np!==ncp){showInline('masterPINStatus','PINs do not match.','error');return;}
+    MASTER_PIN_HASH=getHash(np);localStorage.setItem('fff_master_pin_hash',MASTER_PIN_HASH);
+    showInline('masterPINStatus','Master PIN changed!','success');showToast('Master PIN updated! 🔑','success');
 }
 
 // ============ DATA LOADING ============
-function loadAllData() {
-    users = sG(KEYS.users) || [];
-    pending = sG(KEYS.pending) || [];
-    promoConfig = sG(KEYS.promo) || { active: true, discountPercent: 33, depositWindowHours: 48, vipWindowHours: 72, label: 'Limited Time Offer', code: 'WELCOME33', startedAt: new Date().toISOString() };
-    announceConfig = sG(KEYS.announcement) || { active: false, text: '' };
-    walletAddrs = sG(KEYS.wallets) || { BEP20: '', TRC20: '', TETHER: '' };
-    ipfsCID = localStorage.getItem(KEYS.ipfs) || '';
-    console.log('Loaded:', users.length, 'users,', pending.length, 'pending');
-}
-function refreshAll() { loadAllData(); updateAllViews(); }
-function updateAllViews() {
-    var tb = 0; for (var i = 0; i < users.length; i++) tb += (users[i].balance || 0);
-    document.getElementById('statUsers').textContent = users.length;
-    document.getElementById('statAUM').textContent = '$' + tb.toLocaleString();
-    document.getElementById('statPending').textContent = pending.length;
-    document.getElementById('ipfsCID').value = ipfsCID || '';
-    renderPendingTab();
-    renderUsersTab();
-    renderPromoTab();
-    renderAnnounceTab();
-    renderWalletsTab();
-}
+function loadAllData(){users=sG(KEYS.users)||[];pending=sG(KEYS.pending)||[];promoConfig=sG(KEYS.promo)||{active:true,discountPercent:33,depositWindowHours:48,vipWindowHours:72,label:'Limited Time Offer',code:'WELCOME33',startedAt:new Date().toISOString()};announceConfig=sG(KEYS.announcement)||{active:false,text:''};walletAddrs=sG(KEYS.wallets)||{BEP20:'',TRC20:'',TETHER:''};ipfsCID=localStorage.getItem(KEYS.ipfs)||'';}
+function refreshAll(){loadAllData();updateAllViews();}
+function updateAllViews(){var tb=0;for(var i=0;i<users.length;i++)tb+=(users[i].balance||0);document.getElementById('statUsers').textContent=users.length;document.getElementById('statAUM').textContent='$'+tb.toLocaleString();document.getElementById('statPending').textContent=pending.length;document.getElementById('statIPFS').textContent=ipfsCID?ipfsCID.substring(0,12)+'...':'-';document.getElementById('ipfsCID').value=ipfsCID||'';renderPendingTab();renderUsersTab();renderPromoTab();renderAnnounceTab();if(walletsUnlocked)renderWalletsTab();}
+function forceSync(){sS(KEYS.users,users);sS(KEYS.pending,pending);sS(KEYS.promo,promoConfig);sS(KEYS.announcement,announceConfig);sS(KEYS.wallets,walletAddrs);if(ipfsCID)localStorage.setItem(KEYS.ipfs,ipfsCID);showToast('Synced! Public HTML updated.','success');}
 
-// ============ SYNC ============
-function forceSync() {
-    sS(KEYS.users, users);
-    sS(KEYS.pending, pending);
-    sS(KEYS.promo, promoConfig);
-    sS(KEYS.announcement, announceConfig);
-    sS(KEYS.wallets, walletAddrs);
-    if (ipfsCID) localStorage.setItem(KEYS.ipfs, ipfsCID);
-    msg('dataStatusMsg', 'Synced! Public HTML will see changes.', 'success');
-}
+// ============ PENDING (with date picker) ============
+function renderPendingTab(){var c=document.getElementById('pendingList');if(!pending.length){c.innerHTML='<p style="color:var(--text-muted);text-align:center;padding:40px;">No pending requests</p>';return;}c.innerHTML='';for(var i=0;i<pending.length;i++){(function(idx){var r=pending[idx];var rd=new Date(r.date);var ds=rd.getFullYear()+'-'+('0'+(rd.getMonth()+1)).slice(-2)+'-'+('0'+rd.getDate()).slice(-2)+'T'+('0'+rd.getHours()).slice(-2)+':'+('0'+rd.getMinutes()).slice(-2);var color=r.type==='Deposit'?'#10b981':'#ef4444';var div=document.createElement('div');div.className='pending-item';div.innerHTML='<div><strong style="color:'+color+';">'+r.type+'</strong> • <strong>'+(r.username||'?')+'</strong><br><span style="font-size:18px;font-weight:900;">$'+(r.amount||0).toFixed(2)+'</span>'+(r.promoApplied?' <span style="color:#4ade80;">💚</span>':'')+'<br><span style="font-size:9px;color:var(--text-muted);">'+rd.toLocaleString()+'</span></div><div style="display:flex;gap:6px;"></div>';var btns=div.querySelector('div:last-child');var ab=document.createElement('button');ab.className='btn-success btn-sm';ab.textContent='✓ Approve';ab.onclick=function(){showApprovalDialog(idx,ds);};btns.appendChild(ab);var rb=document.createElement('button');rb.className='btn-danger btn-sm';rb.textContent='✕ Reject';rb.onclick=function(){rejectPending(idx);};btns.appendChild(rb);c.appendChild(div);})(i);}}
+function showApprovalDialog(i,ds){var r=pending[i];if(!r)return;var promoNote=r.promoApplied?'<p style="color:#4ade80;">💚 Promo applied! Bonus added on approval.</p>':'';document.getElementById('modalContent').innerHTML='<h3 style="color:#10b981;">✅ Approve '+r.type+'</h3>'+promoNote+'<div class="approval-section"><p><strong>User:</strong> '+r.username+'</p><p><strong>Amount:</strong> $'+r.amount.toFixed(2)+'</p></div><div class="approval-section"><h4>📅 Date & Time</h4><input type="datetime-local" id="approvalDate" value="'+ds+'"></div><div style="display:flex;gap:10px;"><button class="btn-success w-full" id="doApprove">Confirm</button><button class="btn-outline w-full" onclick="closeModal()">Cancel</button></div>';document.getElementById('modalOverlay').classList.remove('hidden');document.getElementById('doApprove').onclick=function(){confirmApproval(i);};}
+function confirmApproval(i){var r=pending[i];if(!r)return;var dv=document.getElementById('approvalDate').value;var ad=dv?new Date(dv).toISOString():new Date().toISOString();var u=users.find(function(u){return u.id===r.userId;});var total=r.amount;var bonus=0;if(r.promoApplied&&promoConfig&&promoConfig.active){bonus=r.amount*(promoConfig.discountPercent/100);total=r.amount+bonus;}if(u&&r.type==='Deposit'){u.balance+=total;u.dh=u.dh||[];u.dh.push({amount:total,date:ad,approved:true,baseAmount:r.amount,promoBonus:bonus,promoApplied:r.promoApplied||false});u.dh.sort(function(a,b){return new Date(b.date)-new Date(a.date);});if(!u.active)u.active=true;if(r.promoApplied){u.promoDepositUsed=true;u.promoDepositUsedAt=ad;}}else if(u&&r.type==='Withdrawal'&&u.balance>=r.amount){u.balance-=r.amount;u.wh=u.wh||[];u.wh.push({amount:r.amount,date:ad,approved:true});u.wh.sort(function(a,b){return new Date(b.date)-new Date(a.date);});}if(u)saveUser(u);pending.splice(i,1);savePending();closeModal();updateAllViews();forceSync();showToast('Approved! $'+total.toFixed(2)+(bonus>0?' (incl. promo)':''),'success');}
+function rejectPending(i){pending.splice(i,1);savePending();updateAllViews();forceSync();}
 
-// ============ PENDING TAB ============
-function renderPendingTab() {
-    var c = document.getElementById('pendingList');
-    if (!pending.length) { c.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:40px;">No pending requests</p>'; return; }
-    c.innerHTML = '';
-    for (var i = 0; i < pending.length; i++) {
-        (function(idx) {
-            var r = pending[idx];
-            var rd = new Date(r.date);
-            var ds = rd.getFullYear() + '-' + ('0' + (rd.getMonth() + 1)).slice(-2) + '-' + ('0' + rd.getDate()).slice(-2) + 'T' + ('0' + rd.getHours()).slice(-2) + ':' + ('0' + rd.getMinutes()).slice(-2);
-            var color = r.type === 'Deposit' ? '#10b981' : '#ef4444';
-            var div = document.createElement('div');
-            div.className = 'pending-item';
-            div.innerHTML = '<div><strong style="color:' + color + ';">' + r.type + '</strong> • <strong>' + (r.username || '?') + '</strong><br><span style="font-size:18px;font-weight:900;">$' + (r.amount || 0).toFixed(2) + '</span><br><span style="font-size:9px;color:var(--text-muted);">' + rd.toLocaleString() + '</span></div><div style="display:flex;gap:6px;"></div>';
-            var btnDiv = div.querySelector('div:last-child');
-            
-            var approveBtn = document.createElement('button');
-            approveBtn.className = 'btn-success btn-sm';
-            approveBtn.textContent = '✓ Approve';
-            approveBtn.onclick = function() { showApprovalDialog(idx, ds); };
-            btnDiv.appendChild(approveBtn);
-            
-            var rejectBtn = document.createElement('button');
-            rejectBtn.className = 'btn-danger btn-sm';
-            rejectBtn.textContent = '✕ Reject';
-            rejectBtn.onclick = function() { rejectPending(idx); };
-            btnDiv.appendChild(rejectBtn);
-            
-            c.appendChild(div);
-        })(i);
-    }
-}
+// ============ USERS TABLE ============
+function renderUsersTab(){document.getElementById('usersTableBody').innerHTML='';for(var i=0;i<users.length;i++){(function(u){ec(u);var vip=VIP.find(function(v){return v.l===(u.vipLevel||0);})||VIP[0];var active=u.active||(u.dh&&u.dh.length>0);var cards=u.virtualCards||[];var tr=document.createElement('tr');tr.innerHTML='<td><code>'+(u.accountNumber||'?')+'</code></td><td><strong>'+(u.username||'?')+'</strong></td><td style="font-size:9px;">'+(u.email||'')+'</td><td style="color:#10b981;">$'+(u.balance||0).toFixed(2)+'</td><td><span class="badge '+(active?'badge-green':'badge-red')+'">'+(active?'Active':'Inactive')+'</span></td><td><select id="vip-'+u.id+'" style="width:110px;padding:3px;font-size:9px;background:var(--bg-primary);border:1px solid var(--border);color:var(--text-primary);border-radius:4px;"></select></td><td><div class="actions-cell"></div></td>';var sel=tr.querySelector('select');for(var j=0;j<VIP.length;j++){var opt=document.createElement('option');opt.value=VIP[j].l;opt.textContent=VIP[j].n;if((u.vipLevel||0)===VIP[j].l)opt.selected=true;sel.appendChild(opt);}var actions=tr.querySelector('.actions-cell');addBtn(actions,'VIP','btn-sm btn-info',function(){updateVIP(u.id);});addBtn(actions,'+$','btn-sm btn-success',function(){addTx(u.id,'Deposit');});addBtn(actions,'-$','btn-sm btn-danger',function(){addTx(u.id,'Withdrawal');});addBtn(actions,'📈','btn-xs btn-info',function(){addYieldTx(u.id);});if(cards.length>0){addBtn(actions,'💳','btn-xs btn-success',function(){loadCard(u.id);});addBtn(actions,'Buy','btn-xs',function(){addPurchase(u.id);});}addBtn(actions,'📋','btn-xs btn-info',function(){viewHistory(u.id);});addBtn(actions,'✏️','btn-xs btn-danger',function(){editTx(u.id);});document.getElementById('usersTableBody').appendChild(tr);})(users[i]);}}
+function addBtn(parent,text,cls,handler){var b=document.createElement('button');b.className=cls;b.textContent=text;b.onclick=handler;parent.appendChild(b);}
+function filterUsers(){var q=document.getElementById('userSearch').value.toLowerCase();document.querySelectorAll('#usersTableBody tr').forEach(function(r){r.style.display=r.textContent.toLowerCase().includes(q)?'':'none';});}
+function updateVIP(uid){var u=users.find(function(u){return u.id===uid;});if(!u)return;var sel=document.getElementById('vip-'+uid);if(!sel)return;u.vipLevel=parseFloat(sel.value);u.vuh=u.vuh||[];u.vuh.push({level:u.vipLevel,amount:0,date:new Date().toISOString(),adminChange:true});saveUser(u);forceSync();updateAllViews();showToast('VIP updated: '+u.username,'success');}
+function addTx(uid,type){var u=users.find(function(u){return u.id===uid;});if(!u)return;var ns=new Date();var ns2=ns.getFullYear()+'-'+('0'+(ns.getMonth()+1)).slice(-2)+'-'+('0'+ns.getDate()).slice(-2)+'T'+('0'+ns.getHours()).slice(-2)+':'+('0'+ns.getMinutes()).slice(-2);var color=type==='Deposit'?'#10b981':'#ef4444';document.getElementById('modalContent').innerHTML='<h3 style="color:'+color+';">'+type+' — '+u.username+'</h3><div class="form-group"><label>Amount (USDT)</label><input type="number" id="txAmount" step="0.01"></div><div class="form-group"><label>📅 Date & Time</label><input type="datetime-local" id="txDate" value="'+ns2+'"></div><div style="display:flex;gap:10px;"><button class="'+(type==='Deposit'?'btn-success':'btn-danger')+' w-full" id="doTx">Confirm</button><button class="btn-outline w-full" onclick="closeModal()">Cancel</button></div>';document.getElementById('modalOverlay').classList.remove('hidden');document.getElementById('doTx').onclick=function(){var amt=parseFloat(document.getElementById('txAmount').value);var dv=document.getElementById('txDate').value;var d=dv?new Date(dv).toISOString():new Date().toISOString();if(!amt||amt<=0)return;if(type==='Deposit'){u.balance+=amt;u.dh=u.dh||[];u.dh.push({amount:amt,date:d,adminAdded:true});u.dh.sort(function(a,b){return new Date(b.date)-new Date(a.date);});if(!u.active)u.active=true;}else{if(amt>u.balance){showToast('Insufficient balance!','error');return;}u.balance-=amt;u.wh=u.wh||[];u.wh.push({amount:amt,date:d,adminRemoved:true});u.wh.sort(function(a,b){return new Date(b.date)-new Date(a.date);});}saveUser(u);closeModal();forceSync();updateAllViews();showToast(type+' of $'+amt.toFixed(2)+' for '+u.username,'success');};}
+function addYieldTx(uid){var u=users.find(function(u){return u.id===uid;});if(!u)return;var ns=new Date();var ns2=ns.getFullYear()+'-'+('0'+(ns.getMonth()+1)).slice(-2)+'-'+('0'+ns.getDate()).slice(-2)+'T'+('0'+ns.getHours()).slice(-2)+':'+('0'+ns.getMinutes()).slice(-2);document.getElementById('modalContent').innerHTML='<h3 style="color:#fcd535;">📈 Add Yield — '+u.username+'</h3><div class="form-group"><label>Amount (USDT)</label><input type="number" id="yieldAmount" step="0.01"></div><div class="form-group"><label>Rate (%)</label><input type="number" id="yieldRate" step="0.01" placeholder="e.g., 10.5"></div><div class="form-group"><label>📅 Date</label><input type="datetime-local" id="yieldDate" value="'+ns2+'"></div><div style="display:flex;gap:10px;"><button class="btn-success w-full" id="doYield">Add Yield</button><button class="btn-outline w-full" onclick="closeModal()">Cancel</button></div>';document.getElementById('modalOverlay').classList.remove('hidden');document.getElementById('doYield').onclick=function(){var amt=parseFloat(document.getElementById('yieldAmount').value);var rate=parseFloat(document.getElementById('yieldRate').value)||0;var dv=document.getElementById('yieldDate').value;var d=dv?new Date(dv).toISOString():new Date().toISOString();if(!amt||amt<=0)return;u.balance+=amt;u.lrd=new Date(d).toDateString();u.rh=u.rh||[];u.rh.push({date:d,amount:amt,balance:u.balance,rate:rate});u.rh.sort(function(a,b){return new Date(b.date)-new Date(a.date);});saveUser(u);closeModal();forceSync();updateAllViews();showToast('Yield of $'+amt.toFixed(2)+' at '+rate+'% for '+u.username,'success');};}
 
-function showApprovalDialog(i, ds) {
-    var r = pending[i]; if (!r) return;
-    document.getElementById('modalContent').innerHTML = '<h3 style="color:#10b981;">✅ Approve ' + r.type + '</h3><div class="approval-section"><p><strong>User:</strong> ' + r.username + '</p><p><strong>Amount:</strong> <span style="font-size:18px;font-weight:900;">$' + r.amount + '</span></p></div><div class="approval-section"><h4>📅 Date & Time</h4><input type="datetime-local" id="approvalDate" value="' + ds + '"></div><div style="display:flex;gap:10px;"><button class="btn-success w-full" id="confirmApprovalBtn">Confirm Approval</button><button class="btn-outline w-full" onclick="closeModal()">Cancel</button></div>';
-    document.getElementById('modalOverlay').classList.remove('hidden');
-    document.getElementById('confirmApprovalBtn').onclick = function() { confirmApproval(i); };
-}
+// ============ CARD FUNCTIONS ============
+function loadCard(uid){var u=users.find(function(u){return u.id===uid;});if(!u)return;ec(u);var cards=u.virtualCards;if(!cards.length){showToast('No cards.','error');return;}var co='';for(var i=0;i<cards.length;i++){co+='<option value="'+cards[i].id+'">'+cl(cards[i].cardType)+' *'+cards[i].cardNumber.slice(-4)+' ($'+(cards[i].balance||0).toFixed(2)+')</option>';}var ns=new Date();var ns2=ns.getFullYear()+'-'+('0'+(ns.getMonth()+1)).slice(-2)+'-'+('0'+ns.getDate()).slice(-2)+'T'+('0'+ns.getHours()).slice(-2)+':'+('0'+ns.getMinutes()).slice(-2);document.getElementById('modalContent').innerHTML='<h3>💳 Load Card — '+u.username+'</h3><div class="form-group"><label>Card</label><select id="alc">'+co+'</select></div><div class="form-group"><label>Amount</label><input type="number" id="ala" step="0.01"></div><div class="form-group"><label>Source</label><select id="als"><option value="balance">Balance ($'+u.balance.toFixed(2)+')</option><option value="admin">Admin Credit</option></select></div><div class="form-group"><label>📅 Date</label><input type="datetime-local" id="ald" value="'+ns2+'"></div><div style="display:flex;gap:10px;"><button class="btn-success w-full" id="doLoad">Load</button><button class="btn-outline w-full" onclick="closeModal()">Cancel</button></div>';document.getElementById('modalOverlay').classList.remove('hidden');document.getElementById('doLoad').onclick=function(){confirmLoadCard(uid);};}
+function confirmLoadCard(uid){var u=users.find(function(u){return u.id===uid;});if(!u)return;var cid=document.getElementById('alc').value;var amt=parseFloat(document.getElementById('ala').value);var src=document.getElementById('als').value;var dv=document.getElementById('ald').value;var d=dv?new Date(dv).toISOString():new Date().toISOString();if(!cid||!amt||amt<=0)return;var card=u.virtualCards.find(function(c){return c.id===cid;});if(!card)return;if(src==='balance'&&amt>u.balance){showToast('Insufficient balance.','error');return;}if(src==='balance')u.balance-=amt;card.balance=(card.balance||0)+amt;card.transactions=card.transactions||[];card.transactions.push({type:'Load',amount:amt,date:d,source:src,adminLoad:true});card.transactions.sort(function(a,b){return new Date(b.date)-new Date(a.date);});saveUser(u);closeModal();forceSync();updateAllViews();showToast('$'+amt.toFixed(2)+' loaded to card.','success');}
+function addPurchase(uid){var u=users.find(function(u){return u.id===uid;});if(!u)return;ec(u);var cards=u.virtualCards;if(!cards.length){showToast('No cards.','error');return;}var co='';for(var i=0;i<cards.length;i++){co+='<option value="'+cards[i].id+'">'+cl(cards[i].cardType)+' *'+cards[i].cardNumber.slice(-4)+'</option>';}var mo='';for(var j=0;j<MERCHANTS.length;j++){mo+='<option value="'+MERCHANTS[j]+'">'+MERCHANTS[j]+'</option>';}var ns=new Date();var ns2=ns.getFullYear()+'-'+('0'+(ns.getMonth()+1)).slice(-2)+'-'+('0'+ns.getDate()).slice(-2)+'T'+('0'+ns.getHours()).slice(-2)+':'+('0'+ns.getMinutes()).slice(-2);document.getElementById('modalContent').innerHTML='<h3>🛒 Add Purchase — '+u.username+'</h3><div class="form-group"><label>Card</label><select id="acsc">'+co+'</select></div><div class="form-group"><label>Merchant</label><select id="ams">'+mo+'</select></div><div class="form-group"><label>Amount</label><input type="number" id="apa" step="0.01"></div><div class="form-group"><label>📅 Date</label><input type="datetime-local" id="apd" value="'+ns2+'"></div><div style="display:flex;gap:10px;"><button class="btn-success w-full" id="doPurchase">Add</button><button class="btn-outline w-full" onclick="closeModal()">Cancel</button></div>';document.getElementById('modalOverlay').classList.remove('hidden');document.getElementById('doPurchase').onclick=function(){confirmPurchase(uid);};}
+function confirmPurchase(uid){var u=users.find(function(u){return u.id===uid;});if(!u)return;var cid=document.getElementById('acsc').value;var m=document.getElementById('ams').value;var amt=parseFloat(document.getElementById('apa').value);var dv=document.getElementById('apd').value;var d=dv?new Date(dv).toISOString():new Date().toISOString();if(!cid||!m||!amt||amt<=0)return;var card=u.virtualCards.find(function(c){return c.id===cid;});if(!card)return;card.transactions=card.transactions||[];card.spendingHistory=card.spendingHistory||[];var se={id:'sp_'+Date.now(),merchant:m,amount:amt,date:d,status:'Completed',reference:'REF-'+Math.random().toString(36).slice(2,10).toUpperCase()};card.spendingHistory.unshift(se);card.spendingHistory.sort(function(a,b){return new Date(b.date)-new Date(a.date);});card.dailySpent=(card.dailySpent||0)+amt;card.monthlySpent=(card.monthlySpent||0)+amt;card.balance=(card.balance||0)-amt;card.transactions.push({type:'Spending',amount:amt,merchant:m,date:d,reference:se.reference});card.transactions.sort(function(a,b){return new Date(b.date)-new Date(a.date);});saveUser(u);closeModal();forceSync();updateAllViews();showToast('Purchase: $'+amt.toFixed(2)+' at '+m,'success');}
 
-function confirmApproval(i) {
-    var r = pending[i]; if (!r) return;
-    var dv = document.getElementById('approvalDate').value;
-    var ad = dv ? new Date(dv).toISOString() : new Date().toISOString();
-    var u = users.find(function(u) { return u.id === r.userId; });
-    if (u && r.type === 'Deposit') { u.balance += r.amount; u.dh = u.dh || []; u.dh.push({ amount: r.amount, date: ad, approved: true }); if (!u.active) u.active = true; }
-    else if (u && r.type === 'Withdrawal' && u.balance >= r.amount) { u.balance -= r.amount; u.wh = u.wh || []; u.wh.push({ amount: r.amount, date: ad, approved: true }); }
-    if (u) saveUser(u);
-    pending.splice(i, 1); savePending(); closeModal(); updateAllViews(); forceSync();
-    msg('dataStatusMsg', 'Approved!', 'success');
-}
-
-function rejectPending(i) { pending.splice(i, 1); savePending(); updateAllViews(); forceSync(); }
-
-// ============ USERS TAB ============
-function renderUsersTab() {
-    var tbody = document.getElementById('usersTableBody');
-    tbody.innerHTML = '';
-    for (var i = 0; i < users.length; i++) {
-        (function(u) {
-            if (!u.virtualCards) u.virtualCards = [];
-            if (!u.cardSettings) u.cardSettings = { cardHolderName: (u.fullName || u.username || 'CARDHOLDER').toUpperCase(), pins: {}, designs: {}, pinChanged: {} };
-            if (!u.cardSettings.pins) u.cardSettings.pins = {};
-            if (!u.accountNumber) u.accountNumber = '617' + Math.floor(1e6 + Math.random() * 9e6).toString();
-            
-            var vip = VIP_LEVELS.find(function(v) { return v.l === (u.vipLevel || 0); }) || VIP_LEVELS[0];
-            var active = u.active || (u.dh && u.dh.length > 0);
-            var cards = u.virtualCards || [];
-            
-            var tr = document.createElement('tr');
-            tr.innerHTML = '<td><code>' + (u.accountNumber || '?') + '</code></td><td><strong>' + (u.username || '?') + '</strong></td><td style="font-size:9px;">' + (u.email || '') + '</td><td style="color:#10b981;">$' + (u.balance || 0).toFixed(2) + '</td><td><span class="badge ' + (active ? 'badge-green' : 'badge-red') + '">' + (active ? 'Active' : 'Inactive') + '</span></td><td><select id="vip-' + u.id + '" style="width:110px;padding:3px;font-size:9px;background:var(--bg-primary);border:1px solid var(--border);color:var(--text-primary);border-radius:4px;"></select></td><td><div class="actions-cell"></div></td>';
-            
-            var sel = tr.querySelector('select');
-            for (var j = 0; j < VIP_LEVELS.length; j++) {
-                var opt = document.createElement('option');
-                opt.value = VIP_LEVELS[j].l;
-                opt.textContent = VIP_LEVELS[j].n;
-                if ((u.vipLevel || 0) === VIP_LEVELS[j].l) opt.selected = true;
-                sel.appendChild(opt);
-            }
-            
-            var actions = tr.querySelector('.actions-cell');
-            
-            // VIP button
-            var vipBtn = document.createElement('button');
-            vipBtn.className = 'btn-sm btn-info';
-            vipBtn.textContent = 'VIP';
-            vipBtn.onclick = function() { updateVIP(u.id); };
-            actions.appendChild(vipBtn);
-            
-            // +$ button
-            var addBtn = document.createElement('button');
-            addBtn.className = 'btn-sm btn-success';
-            addBtn.textContent = '+$';
-            addBtn.onclick = function() { addFunds(u.id); };
-            actions.appendChild(addBtn);
-            
-            // -$ button
-            var remBtn = document.createElement('button');
-            remBtn.className = 'btn-sm btn-danger';
-            remBtn.textContent = '-$';
-            remBtn.onclick = function() { removeFunds(u.id); };
-            actions.appendChild(remBtn);
-            
-            // Card buttons
-            if (cards.length > 0) {
-                var loadBtn = document.createElement('button');
-                loadBtn.className = 'btn-xs btn-success';
-                loadBtn.textContent = '💳';
-                loadBtn.onclick = function() { loadCard(u.id); };
-                actions.appendChild(loadBtn);
-                
-                var buyBtn = document.createElement('button');
-                buyBtn.className = 'btn-xs';
-                buyBtn.style.background = '#8b5cf6';
-                buyBtn.style.color = 'white';
-                buyBtn.textContent = 'Buy';
-                buyBtn.onclick = function() { addPurchase(u.id); };
-                actions.appendChild(buyBtn);
-            }
-            
-            // History button
-            var histBtn = document.createElement('button');
-            histBtn.className = 'btn-xs btn-outline';
-            histBtn.textContent = '📋';
-            histBtn.onclick = function() { viewHistory(u.id); };
-            actions.appendChild(histBtn);
-            
-            // Edit button
-            var editBtn = document.createElement('button');
-            editBtn.className = 'btn-xs btn-outline';
-            editBtn.textContent = '✏️';
-            editBtn.onclick = function() { editTx(u.id); };
-            actions.appendChild(editBtn);
-            
-            tbody.appendChild(tr);
-        })(users[i]);
-    }
-}
-
-function filterUsers() {
-    var q = document.getElementById('userSearch').value.toLowerCase();
-    document.querySelectorAll('#usersTableBody tr').forEach(function(r) {
-        r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
-    });
-}
-
-function updateVIP(uid) {
-    var u = users.find(function(u) { return u.id === uid; }); if (!u) return;
-    var sel = document.getElementById('vip-' + uid); if (!sel) return;
-    u.vipLevel = parseFloat(sel.value);
-    u.vuh = u.vuh || []; u.vuh.push({ level: u.vipLevel, amount: 0, date: new Date().toISOString(), adminChange: true });
-    saveUser(u); forceSync(); updateAllViews();
-}
-
-function addFunds(uid) {
-    var u = users.find(function(u) { return u.id === uid; }); if (!u) return;
-    var a = parseFloat(prompt('Amount (USDT):', '100')); if (!a || a <= 0) return;
-    u.balance = (u.balance || 0) + a; u.dh = u.dh || [];
-    u.dh.push({ amount: a, date: new Date().toISOString(), adminAdded: true });
-    if (!u.active) u.active = true;
-    saveUser(u); forceSync(); updateAllViews();
-    msg('dataStatusMsg', 'Added $' + a.toFixed(2) + ' to ' + u.username, 'success');
-}
-
-function removeFunds(uid) {
-    var u = users.find(function(u) { return u.id === uid; }); if (!u) return;
-    var a = parseFloat(prompt('Amount (USDT):', '50')); if (!a || a <= 0 || a > (u.balance || 0)) return;
-    u.balance -= a; u.wh = u.wh || [];
-    u.wh.push({ amount: a, date: new Date().toISOString(), adminRemoved: true });
-    saveUser(u); forceSync(); updateAllViews();
-    msg('dataStatusMsg', 'Removed $' + a.toFixed(2) + ' from ' + u.username, 'success');
-}
-
-// ============ CARD LOAD ============
-function loadCard(uid) {
-    var u = users.find(function(u) { return u.id === uid; }); if (!u) return;
-    if (!u.virtualCards || !u.virtualCards.length) { alert('No cards for this user.'); return; }
-    var cards = u.virtualCards;
-    var co = '';
-    for (var i = 0; i < cards.length; i++) {
-        co += '<option value="' + cards[i].id + '">' + cl(cards[i].cardType) + ' *' + cards[i].cardNumber.slice(-4) + ' ($' + (cards[i].balance || 0).toFixed(2) + ')</option>';
-    }
-    var ns = new Date();
-    var ns2 = ns.getFullYear() + '-' + ('0' + (ns.getMonth() + 1)).slice(-2) + '-' + ('0' + ns.getDate()).slice(-2) + 'T' + ('0' + ns.getHours()).slice(-2) + ':' + ('0' + ns.getMinutes()).slice(-2);
-    document.getElementById('modalContent').innerHTML = '<h3>💳 Load Card — ' + u.username + '</h3><div class="form-group"><label>Card</label><select id="alc">' + co + '</select></div><div class="form-group"><label>Amount</label><input type="number" id="ala" step="0.01"></div><div class="form-group"><label>Source</label><select id="als"><option value="balance">Balance ($' + u.balance.toFixed(2) + ')</option><option value="admin">Admin Credit</option></select></div><div class="form-group"><label>Date</label><input type="datetime-local" id="ald" value="' + ns2 + '"></div><div style="display:flex;gap:10px;"><button class="btn-success w-full" id="doLoadCard">Load Card</button><button class="btn-outline w-full" onclick="closeModal()">Cancel</button></div>';
-    document.getElementById('modalOverlay').classList.remove('hidden');
-    document.getElementById('doLoadCard').onclick = function() { confirmLoadCard(uid); };
-}
-
-function confirmLoadCard(uid) {
-    var u = users.find(function(u) { return u.id === uid; }); if (!u) return;
-    var cid = document.getElementById('alc').value;
-    var amt = parseFloat(document.getElementById('ala').value);
-    var src = document.getElementById('als').value;
-    var dv = document.getElementById('ald').value;
-    var d = dv ? new Date(dv).toISOString() : new Date().toISOString();
-    if (!cid || !amt || amt <= 0) return;
-    var card = u.virtualCards.find(function(c) { return c.id === cid; }); if (!card) return;
-    if (src === 'balance' && amt > u.balance) { alert('Only $' + u.balance.toFixed(2) + ' available'); return; }
-    if (src === 'balance') u.balance -= amt;
-    card.balance = (card.balance || 0) + amt;
-    card.transactions = card.transactions || [];
-    card.transactions.push({ type: 'Load', amount: amt, date: d, source: src, adminLoad: true });
-    saveUser(u); closeModal(); forceSync(); updateAllViews();
-    msg('dataStatusMsg', 'Loaded $' + amt.toFixed(2) + ' to card', 'success');
-}
-
-// ============ ADD PURCHASE ============
-function addPurchase(uid) {
-    var u = users.find(function(u) { return u.id === uid; }); if (!u) return;
-    if (!u.virtualCards || !u.virtualCards.length) { alert('No cards for this user.'); return; }
-    var cards = u.virtualCards;
-    var co = '';
-    for (var i = 0; i < cards.length; i++) {
-        co += '<option value="' + cards[i].id + '">' + cl(cards[i].cardType) + ' *' + cards[i].cardNumber.slice(-4) + '</option>';
-    }
-    var mo = '';
-    for (var j = 0; j < MERCHANTS.length; j++) {
-        mo += '<option value="' + MERCHANTS[j] + '">' + MERCHANTS[j] + '</option>';
-    }
-    var ns = new Date();
-    var ns2 = ns.getFullYear() + '-' + ('0' + (ns.getMonth() + 1)).slice(-2) + '-' + ('0' + ns.getDate()).slice(-2) + 'T' + ('0' + ns.getHours()).slice(-2) + ':' + ('0' + ns.getMinutes()).slice(-2);
-    document.getElementById('modalContent').innerHTML = '<h3>🛒 Add Purchase — ' + u.username + '</h3><div class="form-group"><label>Card</label><select id="acsc">' + co + '</select></div><div class="form-group"><label>Merchant</label><select id="ams">' + mo + '</select></div><div class="form-group"><label>Amount</label><input type="number" id="apa" step="0.01"></div><div class="form-group"><label>Date</label><input type="datetime-local" id="apd" value="' + ns2 + '"></div><div style="display:flex;gap:10px;"><button class="btn-success w-full" id="doPurchase">Add Purchase</button><button class="btn-outline w-full" onclick="closeModal()">Cancel</button></div>';
-    document.getElementById('modalOverlay').classList.remove('hidden');
-    document.getElementById('doPurchase').onclick = function() { confirmPurchase(uid); };
-}
-
-function confirmPurchase(uid) {
-    var u = users.find(function(u) { return u.id === uid; }); if (!u) return;
-    var cid = document.getElementById('acsc').value;
-    var m = document.getElementById('ams').value;
-    var amt = parseFloat(document.getElementById('apa').value);
-    var dv = document.getElementById('apd').value;
-    var d = dv ? new Date(dv).toISOString() : new Date().toISOString();
-    if (!cid || !m || !amt || amt <= 0) return;
-    var card = u.virtualCards.find(function(c) { return c.id === cid; }); if (!card) return;
-    card.transactions = card.transactions || [];
-    card.spendingHistory = card.spendingHistory || [];
-    var se = { id: 'sp_' + Date.now(), merchant: m, amount: amt, date: d, status: 'Completed', reference: 'REF-' + Math.random().toString(36).slice(2, 10).toUpperCase() };
-    card.spendingHistory.unshift(se);
-    card.dailySpent = (card.dailySpent || 0) + amt;
-    card.monthlySpent = (card.monthlySpent || 0) + amt;
-    card.balance = (card.balance || 0) - amt;
-    card.transactions.push({ type: 'Spending', amount: amt, merchant: m, date: d, reference: se.reference });
-    saveUser(u); closeModal(); forceSync(); updateAllViews();
-    msg('dataStatusMsg', 'Added purchase: $' + amt.toFixed(2) + ' at ' + m, 'success');
-}
-
-// ============ VIEW HISTORY ============
-function viewHistory(uid) {
-    var u = users.find(function(u) { return u.id === uid; }); if (!u) return;
-    var all = [];
-    (u.dh || []).forEach(function(d) { all.push({ t: 'Deposit', a: d.amount, d: d.date, s: '+' }); });
-    (u.wh || []).forEach(function(w) { all.push({ t: 'Withdrawal', a: w.amount, d: w.date, s: '-' }); });
-    (u.rh || []).forEach(function(r) { all.push({ t: 'Yield', a: r.amount, d: r.date, s: '+' }); });
-    (u.vuh || []).forEach(function(v) { all.push({ t: v.refund ? 'VIP Refund' : 'VIP Upgrade', a: v.amount, d: v.date, s: v.refund ? '+' : '-', lvl: v.level }); });
-    (u.th || []).forEach(function(t) { all.push({ t: t.type === 'sent' ? 'Transfer Sent' : 'Transfer Received', a: t.amount, d: t.date, s: t.type === 'sent' ? '-' : '+', tf: t.to || t.from }); });
-    (u.virtualCards || []).forEach(function(card) {
-        (card.transactions || []).forEach(function(tx) {
-            all.push({ t: 'Card ' + tx.type, a: tx.amount, d: tx.date, s: tx.type === 'Spending' ? '-' : '↔', merchant: tx.merchant || '', cardNum: card.cardNumber.slice(-4) });
-        });
-    });
-    all.sort(function(a, b) { return new Date(b.d) - new Date(a.d); });
-    var html = '<h3>📋 ' + u.username + '</h3><div style="max-height:350px;overflow-y:auto;">';
-    for (var i = 0; i < Math.min(all.length, 50); i++) {
-        var tx = all[i];
-        html += '<div style="display:flex;justify-content:space-between;padding:8px;background:var(--bg-elevated);border-radius:6px;margin-bottom:3px;font-size:10px;"><div><strong>' + tx.t + '</strong>' + (tx.lvl !== undefined ? ' (VIP ' + tx.lvl + ')' : '') + (tx.tf ? ' (' + tx.tf + ')' : '') + (tx.merchant ? ' at ' + tx.merchant : '') + (tx.cardNum ? ' Card *' + tx.cardNum : '') + '<br><span style="font-size:8px;color:var(--text-muted);">' + new Date(tx.d).toLocaleString() + '</span></div><div style="font-weight:800;color:' + (tx.s === '+' ? '#10b981' : tx.s === '-' ? '#ef4444' : '#60a5fa') + ';">' + tx.s + '$' + tx.a.toFixed(2) + '</div></div>';
-    }
-    html += '</div><br><button onclick="closeModal()" class="w-full">Close</button>';
-    document.getElementById('modalContent').innerHTML = html;
-    document.getElementById('modalOverlay').classList.remove('hidden');
-}
-
-// ============ EDIT TRANSACTIONS ============
-function editTx(uid) {
-    var u = users.find(function(u) { return u.id === uid; }); if (!u) return;
-    var all = [];
-    (u.dh || []).forEach(function(d, i) { all.push({ t: 'Deposit', a: d.amount, d: d.date, src: 'dh', idx: i }); });
-    (u.wh || []).forEach(function(w, i) { all.push({ t: 'Withdrawal', a: w.amount, d: w.date, src: 'wh', idx: i }); });
-    (u.rh || []).forEach(function(r, i) { all.push({ t: 'Yield', a: r.amount, d: r.date, src: 'rh', idx: i }); });
-    (u.vuh || []).forEach(function(v, i) { all.push({ t: v.refund ? 'VIP Refund' : 'VIP Upgrade', a: v.amount, d: v.date, src: 'vuh', idx: i }); });
-    (u.th || []).forEach(function(t, i) { all.push({ t: t.type === 'sent' ? 'Transfer Sent' : 'Transfer Received', a: t.amount, d: t.date, src: 'th', idx: i }); });
-    all.sort(function(a, b) { return new Date(b.d) - new Date(a.d); });
-    var html = '<h3>✏️ Edit — ' + u.username + '</h3><div style="max-height:350px;overflow-y:auto;">';
-    for (var i = 0; i < all.length; i++) {
-        (function(tx) {
-            var divId = 'tx-' + tx.src + '-' + tx.idx;
-            html += '<div id="' + divId + '" style="display:flex;justify-content:space-between;align-items:center;padding:6px;background:var(--bg-elevated);border-radius:4px;margin-bottom:2px;font-size:10px;"><div><strong>' + tx.t + '</strong> — $' + tx.a + '<br><span style="font-size:8px;color:var(--text-muted);">' + new Date(tx.d).toLocaleString() + '</span></div><div style="display:flex;gap:3px;"><button class="btn-xs btn-info edit-btn">✏️</button><button class="btn-xs btn-danger del-btn">🗑️</button></div></div>';
-        })(all[i]);
-    }
-    html += '</div><br><button onclick="closeModal()" class="w-full">Close</button>';
-    document.getElementById('modalContent').innerHTML = html;
-    document.getElementById('modalOverlay').classList.remove('hidden');
-    
-    // Attach event listeners after the modal is shown
-    for (var j = 0; j < all.length; j++) {
-        (function(tx) {
-            var divId = 'tx-' + tx.src + '-' + tx.idx;
-            setTimeout(function() {
-                var row = document.getElementById(divId);
-                if (row) {
-                    var editBtn = row.querySelector('.edit-btn');
-                    var delBtn = row.querySelector('.del-btn');
-                    if (editBtn) editBtn.onclick = function() { editSingleTx(uid, tx.src, tx.idx, tx.a, tx.d); };
-                    if (delBtn) delBtn.onclick = function() { deleteSingleTx(uid, tx.src, tx.idx); };
-                }
-            }, 100);
-        })(all[j]);
-    }
-}
-
-function editSingleTx(uid, src, idx, amt, date) {
-    var u = users.find(function(u) { return u.id === uid; }); if (!u) return;
-    var na = parseFloat(prompt('New amount:', amt)); if (isNaN(na)) return;
-    var nd = prompt('New date (YYYY-MM-DDTHH:MM):', date); if (!nd) return;
-    var arr = u[src]; if (!arr || !arr[idx]) return;
-    var oa = arr[idx].amount || 0;
-    arr[idx].amount = na; arr[idx].date = new Date(nd).toISOString();
-    if (src === 'dh' || src === 'rh' || src === 'lh') u.balance = u.balance - oa + na;
-    else if (src === 'wh') u.balance = u.balance + oa - na;
-    saveUser(u); closeModal(); forceSync(); updateAllViews();
-    msg('dataStatusMsg', 'Transaction updated!', 'success');
-}
-
-function deleteSingleTx(uid, src, idx) {
-    if (!confirm('Delete this transaction? Balance will be adjusted.')) return;
-    var u = users.find(function(u) { return u.id === uid; }); if (!u) return;
-    var arr = u[src]; if (!arr || !arr[idx]) return;
-    var oa = arr[idx].amount || 0;
-    if (src === 'dh' || src === 'rh' || src === 'lh') u.balance -= oa;
-    else if (src === 'wh') u.balance += oa;
-    arr.splice(idx, 1);
-    saveUser(u); closeModal(); forceSync(); updateAllViews();
-    msg('dataStatusMsg', 'Transaction deleted!', 'success');
-}
+// ============ VIEW & EDIT HISTORY ============
+function viewHistory(uid){var u=users.find(function(u){return u.id===uid;});if(!u)return;var all=[];(u.dh||[]).forEach(function(d){all.push({t:'Deposit',a:d.amount,d:d.date,s:'+',bonus:d.promoBonus});});(u.wh||[]).forEach(function(w){all.push({t:'Withdrawal',a:w.amount,d:w.date,s:'-'});});(u.rh||[]).forEach(function(r){all.push({t:'Yield',a:r.amount,d:r.date,s:'+',rate:r.rate});});(u.vuh||[]).forEach(function(v){all.push({t:v.refund?'VIP Refund':'VIP Upgrade',a:v.amount,d:v.date,s:v.refund?'+':'-',lvl:v.level});});(u.th||[]).forEach(function(t){all.push({t:t.type==='sent'?'Transfer Sent':'Transfer Received',a:t.amount,d:t.date,s:t.type==='sent'?'-':'+',tf:t.to||t.from});});(u.virtualCards||[]).forEach(function(card){(card.transactions||[]).forEach(function(tx){all.push({t:'Card '+tx.type,a:tx.amount,d:tx.date,s:tx.type==='Spending'?'-':'↔',merchant:tx.merchant||'',cardNum:card.cardNumber.slice(-4)});});});all.sort(function(a,b){return new Date(b.d)-new Date(a.d);});var html='<h3>📋 '+u.username+'</h3><div style="max-height:350px;overflow-y:auto;">';for(var i=0;i<Math.min(all.length,50);i++){var tx=all[i];var note='';if(tx.bonus&&tx.bonus>0)note=' 💚 +$'+tx.bonus.toFixed(2);if(tx.rate)note=' 📈 '+tx.rate+'%';html+='<div style="display:flex;justify-content:space-between;padding:8px;background:var(--bg-elevated);border-radius:6px;margin-bottom:3px;font-size:10px;"><div><strong>'+tx.t+'</strong>'+note+(tx.lvl!==undefined?' (VIP '+tx.lvl+')':'')+(tx.tf?' ('+tx.tf+')':'')+(tx.merchant?' at '+tx.merchant:'')+(tx.cardNum?' Card *'+tx.cardNum:'')+'<br><span style="font-size:8px;color:var(--text-muted);">'+new Date(tx.d).toLocaleString()+'</span></div><div style="font-weight:800;color:'+(tx.s==='+'?'#10b981':tx.s==='-'?'#ef4444':'#60a5fa')+';">'+tx.s+'$'+tx.a.toFixed(2)+'</div></div>';}html+='</div><br><button onclick="closeModal()" class="w-full">Close</button>';document.getElementById('modalContent').innerHTML=html;document.getElementById('modalOverlay').classList.remove('hidden');}
+function editTx(uid){var u=users.find(function(u){return u.id===uid;});if(!u)return;var all=[];(u.dh||[]).forEach(function(d,i){all.push({t:'Deposit',a:d.amount,d:d.date,src:'dh',idx:i});});(u.wh||[]).forEach(function(w,i){all.push({t:'Withdrawal',a:w.amount,d:w.date,src:'wh',idx:i});});(u.rh||[]).forEach(function(r,i){all.push({t:'Yield',a:r.amount,d:r.date,src:'rh',idx:i});});(u.vuh||[]).forEach(function(v,i){all.push({t:v.refund?'VIP Refund':'VIP Upgrade',a:v.amount,d:v.date,src:'vuh',idx:i});});(u.th||[]).forEach(function(t,i){all.push({t:t.type==='sent'?'Transfer Sent':'Transfer Received',a:t.amount,d:t.date,src:'th',idx:i});});all.sort(function(a,b){return new Date(b.d)-new Date(a.d);});var html='<h3>✏️ Edit — '+u.username+'</h3><div style="max-height:350px;overflow-y:auto;">';for(var j=0;j<all.length;j++){(function(tx){html+='<div id="tx-'+tx.src+'-'+tx.idx+'" style="display:flex;justify-content:space-between;align-items:center;padding:6px;background:var(--bg-elevated);border-radius:4px;margin-bottom:2px;font-size:10px;"><div><strong>'+tx.t+'</strong> — $'+tx.a+'<br><span style="font-size:8px;color:var(--text-muted);">'+new Date(tx.d).toLocaleString()+'</span></div><div style="display:flex;gap:3px;"><button class="btn-xs btn-info ebtn">✏️</button><button class="btn-xs btn-danger dbtn">🗑️</button></div></div>';})(all[j]);}html+='</div><br><button onclick="closeModal()" class="w-full">Close</button>';document.getElementById('modalContent').innerHTML=html;document.getElementById('modalOverlay').classList.remove('hidden');for(var k=0;k<all.length;k++){(function(tx){setTimeout(function(){var row=document.getElementById('tx-'+tx.src+'-'+tx.idx);if(row){row.querySelector('.ebtn').onclick=function(){var na=parseFloat(prompt('New amount:',tx.a));if(isNaN(na))return;var nd=prompt('New date:',tx.d);if(!nd)return;var arr=u[tx.src];if(!arr||!arr[tx.idx])return;var oa=arr[tx.idx].amount||0;arr[tx.idx].amount=na;arr[tx.idx].date=new Date(nd).toISOString();if(tx.src==='dh'||tx.src==='rh')u.balance=u.balance-oa+na;else if(tx.src==='wh')u.balance=u.balance+oa-na;arr.sort(function(a,b){return new Date(b.date)-new Date(a.date);});saveUser(u);closeModal();forceSync();updateAllViews();showToast('Updated!','success');};row.querySelector('.dbtn').onclick=function(){if(!confirm('Delete?'))return;var arr=u[tx.src];if(!arr||!arr[tx.idx])return;var oa=arr[tx.idx].amount||0;if(tx.src==='dh'||tx.src==='rh')u.balance-=oa;else if(tx.src==='wh')u.balance+=oa;arr.splice(tx.idx,1);saveUser(u);closeModal();forceSync();updateAllViews();showToast('Deleted!','success');};}},150);})(all[k]);}}
 
 // ============ PROMO / ANNOUNCEMENT / WALLETS ============
-function renderPromoTab() {
-    if (!promoConfig) return;
-    document.getElementById('promoLabel').value = promoConfig.label || '';
-    document.getElementById('promoCode').value = promoConfig.code || '';
-    document.getElementById('promoDiscount').value = promoConfig.discountPercent || 33;
-    document.getElementById('promoStatus').value = promoConfig.active ? 'active' : 'inactive';
-    document.getElementById('promoDepHours').value = promoConfig.depositWindowHours || 48;
-    document.getElementById('promoVIPHours').value = promoConfig.vipWindowHours || 72;
-}
-function savePromo() {
-    promoConfig = {
-        label: document.getElementById('promoLabel').value.trim(),
-        code: document.getElementById('promoCode').value.trim().toUpperCase(),
-        discountPercent: parseInt(document.getElementById('promoDiscount').value),
-        active: document.getElementById('promoStatus').value === 'active',
-        depositWindowHours: parseInt(document.getElementById('promoDepHours').value),
-        vipWindowHours: parseInt(document.getElementById('promoVIPHours').value),
-        startedAt: promoConfig ? promoConfig.startedAt : new Date().toISOString()
-    };
-    sS(KEYS.promo, promoConfig);
-    forceSync();
-    msg('promoStatusMsg', 'Promo saved! Code: ' + promoConfig.code + ' | Active: ' + promoConfig.active, 'success');
-}
-function extendPromo() {
-    var h = parseInt(prompt('Extend by hours:', '24')); if (!h || h <= 0) return;
-    promoConfig.depositWindowHours += h; promoConfig.vipWindowHours += h;
-    renderPromoTab(); savePromo();
-}
-function renderAnnounceTab() {
-    if (!announceConfig) announceConfig = { active: false, text: '' };
-    document.getElementById('annText').value = announceConfig.text || '';
-    var b = document.getElementById('annStatusBadge');
-    b.textContent = announceConfig.active ? 'ACTIVE' : 'INACTIVE';
-    b.className = 'badge ' + (announceConfig.active ? 'badge-green' : 'badge-red');
-    document.getElementById('annToggleBtn').textContent = announceConfig.active ? '⏹ Stop' : '▶ Start';
-}
-function toggleAnnounce() {
-    announceConfig.active = !announceConfig.active;
-    if (announceConfig.active) announceConfig.startedAt = new Date().toISOString();
-    renderAnnounceTab();
-    sS(KEYS.announcement, announceConfig);
-    forceSync();
-}
-function saveAnnounce() {
-    announceConfig.text = document.getElementById('annText').value.trim();
-    sS(KEYS.announcement, announceConfig);
-    forceSync();
-}
-function renderWalletsTab() {
-    document.getElementById('walletBEP20').value = walletAddrs.BEP20 || '';
-    document.getElementById('walletTRC20').value = walletAddrs.TRC20 || '';
-    document.getElementById('walletTETHER').value = walletAddrs.TETHER || '';
-}
-function saveWallets() {
-    walletAddrs = {
-        BEP20: document.getElementById('walletBEP20').value.trim(),
-        TRC20: document.getElementById('walletTRC20').value.trim(),
-        TETHER: document.getElementById('walletTETHER').value.trim()
-    };
-    sS(KEYS.wallets, walletAddrs);
-    forceSync();
-    msg('walletConfigStatus', 'Wallets saved!', 'success');
-}
+function renderPromoTab(){if(!promoConfig)return;document.getElementById('promoLabel').value=promoConfig.label||'';document.getElementById('promoCode').value=promoConfig.code||'';document.getElementById('promoDiscount').value=promoConfig.discountPercent||33;document.getElementById('promoStatus').value=promoConfig.active?'active':'inactive';document.getElementById('promoDepHours').value=promoConfig.depositWindowHours||48;document.getElementById('promoVIPHours').value=promoConfig.vipWindowHours||72;}
+function savePromo(){promoConfig={label:document.getElementById('promoLabel').value.trim(),code:document.getElementById('promoCode').value.trim().toUpperCase(),discountPercent:parseInt(document.getElementById('promoDiscount').value),active:document.getElementById('promoStatus').value==='active',depositWindowHours:parseInt(document.getElementById('promoDepHours').value),vipWindowHours:parseInt(document.getElementById('promoVIPHours').value),startedAt:promoConfig?promoConfig.startedAt:new Date().toISOString()};sS(KEYS.promo,promoConfig);forceSync();showToast('Promo saved!','success');}
+function renderAnnounceTab(){if(!announceConfig)announceConfig={active:false,text:''};document.getElementById('annText').value=announceConfig.text||'';var b=document.getElementById('annStatusBadge');b.textContent=announceConfig.active?'ACTIVE':'INACTIVE';b.className='badge '+(announceConfig.active?'badge-green':'badge-red');document.getElementById('annToggleBtn').textContent=announceConfig.active?'⏹ Stop':'▶ Start';}
+function toggleAnnounce(){announceConfig.active=!announceConfig.active;if(announceConfig.active)announceConfig.startedAt=new Date().toISOString();renderAnnounceTab();sS(KEYS.announcement,announceConfig);forceSync();}
+function saveAnnounce(){announceConfig.text=document.getElementById('annText').value.trim();sS(KEYS.announcement,announceConfig);forceSync();showToast('Saved!','success');}
+function renderWalletsTab(){document.getElementById('walletBEP20').value=walletAddrs.BEP20||'';document.getElementById('walletTRC20').value=walletAddrs.TRC20||'';document.getElementById('walletTETHER').value=walletAddrs.TETHER||'';}
+function saveWallets(){walletAddrs={BEP20:document.getElementById('walletBEP20').value.trim(),TRC20:document.getElementById('walletTRC20').value.trim(),TETHER:document.getElementById('walletTETHER').value.trim()};sS(KEYS.wallets,walletAddrs);forceSync();showToast('Wallets saved!','success');}
 
 // ============ IPFS ============
-async function pushToIPFS() {
-    msg('ipfsStatusMsg', 'Pushing to IPFS...', 'info');
-    var bundle = { users: users, pending: pending, promo: promoConfig, announcement: announceConfig, wallets: walletAddrs, timestamp: Date.now(), version: '1.0' };
-    var cid = await uploadToIPFS(JSON.stringify(bundle));
-    if (cid) {
-        ipfsCID = cid;
-        localStorage.setItem(KEYS.ipfs, cid);
-        document.getElementById('ipfsCID').value = cid;
-        forceSync();
-        msg('ipfsStatusMsg', 'Pushed! CID: ' + cid, 'success');
-    } else {
-        msg('ipfsStatusMsg', 'IPFS upload failed. Data synced locally.', 'error');
-    }
-}
-async function uploadToIPFS(dataStr) {
-    var endpoints = ['https://ipfs.infura.io:5001/api/v0/add', 'https://api.ipfsbrowser.com/api/v0/add'];
-    for (var i = 0; i < endpoints.length; i++) {
-        try {
-            var fd = new FormData();
-            fd.append('file', new Blob([dataStr], { type: 'application/octet-stream' }), 'data.json');
-            var r = await fetch(endpoints[i], { method: 'POST', body: fd });
-            if (r.ok) { var j = await r.json(); if (j.Hash) return j.Hash; }
-        } catch(e) { continue; }
-    }
-    var fakeCID = 'bafy' + sh(dataStr);
-    console.log('Generated CID:', fakeCID);
-    return fakeCID;
-}
+async function pushToIPFS(){showToast('Pushing to IPFS...','info');var bundle={users:users,pending:pending,promo:promoConfig,announcement:announceConfig,wallets:walletAddrs,timestamp:Date.now(),version:'1.0'};var cid=await uploadToIPFS(JSON.stringify(bundle));if(cid){ipfsCID=cid;localStorage.setItem(KEYS.ipfs,cid);document.getElementById('ipfsCID').value=cid;document.getElementById('statIPFS').textContent=cid.substring(0,12)+'...';forceSync();showToast('Pushed! CID: '+cid,'success');}else{showToast('Upload failed.','error');}}
+async function uploadToIPFS(dataStr){var endpoints=['https://ipfs.infura.io:5001/api/v0/add','https://api.ipfsbrowser.com/api/v0/add'];for(var i=0;i<endpoints.length;i++){try{var fd=new FormData();fd.append('file',new Blob([dataStr],{type:'application/octet-stream'}),'data.json');var r=await fetch(endpoints[i],{method:'POST',body:fd});if(r.ok){var j=await r.json();if(j.Hash)return j.Hash;}}catch(e){continue;}}return'bafy'+sh(dataStr);}
 
 // ============ DATA ============
-function exportData() {
-    var d = { users: users, pending: pending, promo: promoConfig, announcement: announceConfig, wallets: walletAddrs };
-    var b = new Blob([JSON.stringify(d, null, 2)], { type: 'application/json' });
-    var url = URL.createObjectURL(b);
-    var a = document.createElement('a'); a.href = url; a.download = 'fff-backup-' + new Date().toISOString().split('T')[0] + '.json'; a.click();
-    URL.revokeObjectURL(url);
-}
-function importData() { document.getElementById('backupFileInput').click(); }
-function handleImport(e) {
-    var f = e.target.files[0]; if (!f) return;
-    var reader = new FileReader();
-    reader.onload = function(ev) {
-        try {
-            var d = JSON.parse(ev.target.result);
-            if (confirm('Import backup? Users: ' + (d.users || []).length)) {
-                if (d.users) { users = d.users; sS(KEYS.users, users); }
-                if (d.pending) { pending = d.pending; sS(KEYS.pending, pending); }
-                if (d.promo) { promoConfig = d.promo; sS(KEYS.promo, promoConfig); }
-                if (d.announcement) { announceConfig = d.announcement; sS(KEYS.announcement, announceConfig); }
-                if (d.wallets) { walletAddrs = d.wallets; sS(KEYS.wallets, walletAddrs); }
-                updateAllViews(); forceSync();
-            }
-        } catch(ex) { alert('Invalid file'); }
-    };
-    reader.readAsText(f);
-    e.target.value = '';
-}
+function exportData(){var d={users:users,pending:pending,promo:promoConfig,announcement:announceConfig,wallets:walletAddrs};var b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});var url=URL.createObjectURL(b);var a=document.createElement('a');a.href=url;a.download='fff-backup-'+new Date().toISOString().split('T')[0]+'.json';a.click();URL.revokeObjectURL(url);showToast('Exported!','success');}
+function importData(){document.getElementById('backupFileInput').click();}
+function handleImport(e){var f=e.target.files[0];if(!f)return;var reader=new FileReader();reader.onload=function(ev){try{var d=JSON.parse(ev.target.result);if(confirm('Import? Users: '+(d.users||[]).length)){if(d.users){users=d.users;sS(KEYS.users,users);}if(d.pending){pending=d.pending;sS(KEYS.pending,pending);}if(d.promo){promoConfig=d.promo;sS(KEYS.promo,promoConfig);}if(d.announcement){announceConfig=d.announcement;sS(KEYS.announcement,announceConfig);}if(d.wallets){walletAddrs=d.wallets;sS(KEYS.wallets,walletAddrs);}updateAllViews();forceSync();showToast('Imported!','success');}}catch(ex){showToast('Invalid file.','error');}};reader.readAsText(f);e.target.value='';}
 
 // ============ PERSISTENCE ============
-function saveUser(u) {
-    var all = sG(KEYS.users) || [];
-    var i = all.findIndex(function(x) { return x.id === u.id; });
-    if (i >= 0) all[i] = u; else all.push(u);
-    users = all; sS(KEYS.users, all);
-}
-function savePending() { sS(KEYS.pending, pending); }
+function saveUser(u){var all=sG(KEYS.users)||[];var i=all.findIndex(function(x){return x.id===u.id;});if(i>=0)all[i]=u;else all.push(u);users=all;sS(KEYS.users,all);}
+function savePending(){sS(KEYS.pending,pending);}
 
-// ============ SESSION CHECK ============
-(function() {
-    var s = sessionStorage.getItem('fff_admin_session');
-    if (s) { try { var d = JSON.parse(s); if (d.ok && (Date.now() - d.ts < 3600000)) { loggedIn = true; document.getElementById('loginScreen').classList.add('hidden'); document.getElementById('mainDashboard').classList.remove('hidden'); loadAllData(); updateAllViews(); } } catch(e) {} }
-})();
-console.log('Admin Console Ready - All buttons use proper event listeners');
+// ============ SESSION ============
+(function(){var s=sessionStorage.getItem(KEYS.session);if(s){try{var d=JSON.parse(s);if(d.ok&&(Date.now()-d.ts<3600000)){loggedIn=true;document.getElementById('loginScreen').classList.add('hidden');document.getElementById('mainDashboard').classList.remove('hidden');loadAllData();updateAllViews();}}catch(e){}}})();
 </script>
 </body>
 </html>
